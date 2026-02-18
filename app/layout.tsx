@@ -1,29 +1,29 @@
 // app/layout.tsx
-import "./globals.css";
-import { Inter, Space_Grotesk, Montserrat } from "next/font/google";
+import './globals.css'
+import { Inter, Space_Grotesk, Montserrat } from 'next/font/google'
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space",
-  display: "swap",
-});
+  subsets: ['latin'],
+  variable: '--font-space',
+  display: 'swap',
+})
 
 const montserrat = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-montserrat",
-  display: "swap",
-});
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  display: 'swap',
+})
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html
@@ -32,5 +32,5 @@ export default function RootLayout({
     >
       <body>{children}</body>
     </html>
-  );
+  )
 }
