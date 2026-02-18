@@ -16,9 +16,7 @@ import {
 } from '@/components/ui/field'
 
 const loginSchema = z.object({
-  email: z
-    .string({ error: 'O campo usuário é obrigatório.' })
-    .min(1, 'O campo usuário é obrigatório.'),
+  email: z.email({ error: 'Digite um e-mail válido.' }),
   password: z
     .string({ error: 'O campo senha é obrigatório.' })
     .min(1, 'O campo senha é obrigatório.'),
