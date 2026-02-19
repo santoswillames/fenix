@@ -3,17 +3,20 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react'
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/store/auth.store'
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
 } from '@/components/ui/field'
+import { toast } from 'sonner'
 
 const loginSchema = z.object({
   email: z.email({ error: 'Digite um e-mail válido.' }),
@@ -26,6 +29,8 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter()
+  const setUser = useAuthStore((state) => state.setUser)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -35,8 +40,55 @@ export function LoginForm() {
     },
   })
 
-  function onSubmit(data: LoginFormValues) {
-    console.log('Dados do formulário:', data)
+  async function onSubmit(data: LoginFormValues) {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      const responseData = await response.json()
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Erro ao fazer login')
+      }
+
+      const accessToken = responseData.accessToken
+
+      if (!accessToken) {
+        throw new Error('Token não recebido')
+      }
+
+      const decoded = JSON.parse(atob(accessToken.split('.')[1]))
+      const userId = decoded.id
+
+      const userResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      )
+
+      if (!userResponse.ok) {
+        throw new Error('Erro ao buscar usuário')
+      }
+
+      const user = await userResponse.json()
+
+      setUser(user)
+
+      router.push('/dashboard')
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Erro inesperado ao fazer login'
+
+      toast.error(message)
+    }
   }
 
   return (
@@ -124,7 +176,16 @@ export function LoginForm() {
           </button>
         </div>
 
-        <Button className="w-full h-12 mt-4 rounded-xl">Entrar</Button>
+        <Button className="w-full h-12 mt-4 rounded-xl">
+          {form.formState.isSubmitting ? (
+            <div className="flex items-center gap-2">
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+              <span>Entrando...</span>
+            </div>
+          ) : (
+            'Entrar'
+          )}
+        </Button>
       </div>
     </form>
   )

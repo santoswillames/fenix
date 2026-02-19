@@ -1,6 +1,7 @@
 // app/layout.tsx
 import './globals.css'
 import { Inter, Space_Grotesk, Montserrat } from 'next/font/google'
+import { Toaster } from '@/components/ui/sonner'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,7 +31,10 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${inter.variable} ${spaceGrotesk.variable} ${montserrat.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster richColors position="top-center" closeButton invert />
+      </body>
     </html>
   )
 }
