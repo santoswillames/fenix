@@ -1,8 +1,8 @@
 import { Header } from '@/components/header'
 import { StatsCard } from '@/components/stats-card'
+import { TicketsTable } from '@/components/tickets-table/tickets-table'
 import { Button } from '@/components/ui/button'
 import {
-  CircleCheck,
   CircleCheckBig,
   Clock,
   MessageCircleReply,
@@ -14,7 +14,7 @@ export default function TicketsPage() {
   return (
     <div>
       <Header title="Tickets">
-        <Button className="rounded-full shadow-[0_0_10px_0_#1876D2] hover:shadow-[0_0_20px_2px_#1876D2] transition-all duration-300">
+        <Button className="cursor-pointer rounded-full shadow-[0_0_10px_0_#1876D2] hover:shadow-[0_0_20px_2px_#1876D2] transition-all duration-300">
           <Plus className="mr-2" size={16} />
           Novo Ticket
         </Button>
@@ -42,6 +42,7 @@ export default function TicketsPage() {
             icon={<Clock size={28} color="#59BCDD" />}
           />
         </div>
+        <TicketsTable />
       </main>
     </div>
   )
