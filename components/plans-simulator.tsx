@@ -4,16 +4,9 @@ import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider'
-import { cn } from '@/lib/utils'
 import { PlanCard } from './plan-card'
 
 type PlanType = 'basic' | 'intermediate' | 'premium'
-
-const basePrices: Record<PlanType, number> = {
-  basic: 89.9,
-  intermediate: 145.9,
-  premium: 225.9,
-}
 
 const additionalCoverages = [
   { id: 'roubo', label: 'Cobertura contra roubo e furto', price: 25 },
@@ -43,7 +36,7 @@ export function PlansSimulator() {
   }
 
   return (
-    <Card className="bg-secondary text-white p-8 flex-1 rounded-2xl border border-slate-700 space-y-8 col-span-4">
+    <Card className=" text-white p-8 flex-1 rounded-2xl border border-slate-700 space-y-8 col-span-4">
       <h2 className="text-xl font-semibold">Planos personalizados</h2>
 
       <div className="grid grid-cols-3 gap-6">
