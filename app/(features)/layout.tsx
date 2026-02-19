@@ -1,14 +1,22 @@
 import { Sidebar } from '@/components/sidebar'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <div className="bg-[#0B1220] min-h-screen">
-      <Sidebar />
+  const cookieStore = await cookies()
+  const token = cookieStore.get('token')?.value
 
+  if (!token) {
+    redirect('/')
+  }
+
+  return (
+    <div className="bg-background min-h-screen">
+      <Sidebar />
       <main className="pl-20">{children}</main>
     </div>
   )

@@ -10,6 +10,7 @@ import {
   Calculator,
 } from 'lucide-react'
 import Image from 'next/image'
+import { useAuthStore } from '@/store/auth.store'
 
 const navItems = [
   {
@@ -36,10 +37,12 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const user = useAuthStore((state) => state.user)
+
+  if (!user) return null
 
   return (
     <aside className="fixed left-0 top-0 z-50 h-screen w-20 bg-secondary flex flex-col items-center py-6 rounded-tr-3xl rounded-br-3xl">
-      {/* Logo */}
       <div className="mb-10">
         <Image
           src="/logo-minimal.svg"
@@ -49,7 +52,6 @@ export function Sidebar() {
         />
       </div>
 
-      {/* Navigation */}
       <nav className="flex flex-col gap-6 flex-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href
@@ -72,10 +74,9 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Avatar / User */}
       <div className="mt-auto">
         <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-sm font-medium">
-          WS
+          {user.name.charAt(0).toUpperCase()}
         </div>
       </div>
     </aside>
