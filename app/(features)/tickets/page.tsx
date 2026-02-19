@@ -1,26 +1,15 @@
 import { Header } from '@/components/header'
+import { NewTicketDialog } from '@/components/new-ticket-dialog'
 import { StatsCard } from '@/components/stats-card'
 import { TicketsTable } from '@/components/tickets-table/tickets-table'
-import { Button } from '@/components/ui/button'
-import {
-  CircleCheckBig,
-  Clock,
-  MessageCircleReply,
-  Plus,
-  Ticket,
-} from 'lucide-react'
+import { CircleCheckBig, Clock, MessageCircleReply, Ticket } from 'lucide-react'
 
 export default function TicketsPage() {
   return (
     <div>
-      <Header title="Tickets">
-        <Button className="cursor-pointer rounded-full shadow-[0_0_10px_0_#1876D2] hover:shadow-[0_0_20px_2px_#1876D2] transition-all duration-300">
-          <Plus className="mr-2" size={16} />
-          Novo Ticket
-        </Button>
-      </Header>
+      <Header title="Tickets" />
       <main className="pl-30 p-10 flex flex-col gap-10">
-        <div className="flex gap-6 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-6 w-full">
           <StatsCard
             title="Tickets Abertos"
             data={15}
@@ -44,6 +33,7 @@ export default function TicketsPage() {
         </div>
         <TicketsTable />
       </main>
+      <NewTicketDialog />
     </div>
   )
 }

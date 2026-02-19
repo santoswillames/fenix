@@ -6,7 +6,9 @@ import { Ticket } from '@/types/ticket'
 import { Pencil, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export const columns: ColumnDef<Ticket>[] = [
+export const columns = (
+  openEdit: (ticket: Ticket) => void,
+): ColumnDef<Ticket>[] => [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -96,7 +98,7 @@ export const columns: ColumnDef<Ticket>[] = [
             variant="ghost"
             size="sm"
             className="text-muted-foreground"
-            onClick={() => console.log('Editar', ticket.id)}
+            onClick={() => openEdit(ticket)}
           >
             <span className="flex items-center gap-2 text-muted-foreground">
               Editar

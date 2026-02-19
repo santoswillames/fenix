@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '../ui/select'
 import { Ticket } from '@/types/ticket'
+import { useTicketDialog } from '@/store/ticket-dialog.store'
 
 const data: Ticket[] = [
   {
@@ -53,6 +54,8 @@ const data: Ticket[] = [
 ]
 
 export function TicketsTable() {
+  const { openEdit } = useTicketDialog()
+
   return (
     <div className="rounded-3xl border border-white/10 bg-[#0f172a] p-6 space-y-6">
       <h2 className="text-xl font-bold ">Lista de Tickets</h2>
@@ -104,7 +107,7 @@ export function TicketsTable() {
         </Select>
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns(openEdit)} data={data} />
     </div>
   )
 }
