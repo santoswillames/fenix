@@ -39,7 +39,7 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname()
   const user = useAuthStore((state) => state.user)
-  const hasHydrated = useAuthStore.persist.hasHydrated()
+  const hasHydrated = useAuthStore?.persist?.hasHydrated()
 
   if (!hasHydrated) {
     return <SidebarSkeleton />
