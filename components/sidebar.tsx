@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useAuthStore } from '@/store/auth.store'
+import { SidebarSkeleton } from './sidebar-skeleton'
 
 const navItems = [
   {
@@ -38,11 +39,16 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname()
   const user = useAuthStore((state) => state.user)
+  const hasHydrated = useAuthStore?.persist?.hasHydrated()
+
+  if (!hasHydrated) {
+    return <SidebarSkeleton />
+  }
 
   if (!user) return null
 
   return (
-    <aside className="fixed left-0 top-0 z-50 h-screen w-20 bg-secondary flex flex-col items-center py-6 rounded-tr-3xl rounded-br-3xl">
+    <aside className="fixed left-0 top-0 z-50 h-screen w-20 bg-secondary flex flex-col items-center py-6 rounded-tr-3xl rounded-br-3xl shadow-[4px_0px_20px_0px_#00000033]">
       <div className="mb-10">
         <Image
           src="/logo-minimal.svg"
