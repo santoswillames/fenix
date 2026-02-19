@@ -17,7 +17,7 @@ export default async function ProtectedLayout({
   return (
     <div className="bg-background min-h-screen">
       <Sidebar />
-      <main className="pl-20">{children}</main>
+      <main className="flex-1 flex flex-col">{children}</main>
     </div>
   )
 }
