@@ -1,4 +1,5 @@
 import { ClientsMap } from '@/components/clients-map-card'
+import { ClientsTable } from '@/components/clients-table/clients-table'
 import { ConversionRateCard } from '@/components/conversion-rate-card'
 import { Header } from '@/components/header'
 import { KpiEvolutionCard } from '@/components/kpi-evolution-card'
@@ -13,6 +14,7 @@ export default function DashboardPage() {
           <ConversionRateCard />
         </div>
         <ClientsMap />
+        <ClientsTable />
       </main>
     </div>
   )
