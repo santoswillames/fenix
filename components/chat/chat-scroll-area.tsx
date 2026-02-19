@@ -7,7 +7,7 @@ import { ChatMessage } from './chat-message'
 
 interface Props {
   messages: ChatMessageType[]
-  bottomRef: React.RefObject<HTMLDivElement>
+  bottomRef: React.RefObject<HTMLDivElement | null>
 }
 
 export function ChatScrollArea({ messages }: Props) {
