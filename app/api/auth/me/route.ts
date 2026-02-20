@@ -40,5 +40,5 @@ export async function GET() {
 
   const user = await response.json()
 
-  return NextResponse.json(user)
+  return NextResponse.json({ user, accessToken: token })
 }

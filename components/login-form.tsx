@@ -31,7 +31,7 @@ type LoginFormValues = z.infer<typeof loginSchema>
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
-  const setUser = useAuthStore((state) => state.setUser)
+  const setUser = useAuthStore((state) => state.setAuth)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -45,9 +45,9 @@ export function LoginForm() {
     try {
       await login({ email, password })
 
-      const user = await getCurrentUser()
+      const { user, accessToken } = await getCurrentUser()
 
-      setUser(user)
+      setUser(user, accessToken)
 
       router.push('/dashboard')
     } catch (error: unknown) {

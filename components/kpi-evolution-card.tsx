@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { KpiType, useKpiStore } from '@/store/kpi.store'
 import { KpiChart } from './kpi-chart'
+import { KpisTrend } from '@/types/dashboard'
 
 const tabs: { label: string; value: KpiType }[] = [
   { label: 'Retenção', value: 'retention' },
@@ -13,8 +14,28 @@ const tabs: { label: string; value: KpiType }[] = [
   { label: 'ARPU', value: 'arpu' },
 ]
 
-export function KpiEvolutionCard() {
+interface KpiEvolutionCardProps {
+  kpisTrend: KpisTrend
+}
+
+export function KpiEvolutionCard({ kpisTrend }: KpiEvolutionCardProps) {
   const { activeKpi, setActiveKpi } = useKpiStore()
+
+  const { labels, arpuTrend, conversionTrend, churnTrend, retentionTrend } =
+    kpisTrend
+
+  const datasets = {
+    arpu: arpuTrend.data.map((value, i) => ({ month: labels[i], value })),
+    conversion: conversionTrend.data.map((value, i) => ({
+      month: labels[i],
+      value,
+    })),
+    churn: churnTrend.data.map((value, i) => ({ month: labels[i], value })),
+    retention: retentionTrend.data.map((value, i) => ({
+      month: labels[i],
+      value,
+    })),
+  }
 
   return (
     <Card
@@ -53,7 +74,7 @@ export function KpiEvolutionCard() {
         </div>
 
         <div className="flex-1 flex items-center justify-center">
-          <KpiChart />
+          <KpiChart data={datasets[activeKpi]} />
         </div>
       </CardContent>
     </Card>

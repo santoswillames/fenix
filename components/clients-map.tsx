@@ -5,14 +5,60 @@ import Map from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import XYZ from 'ol/source/XYZ'
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
+import Feature from 'ol/Feature'
+import Point from 'ol/geom/Point'
 import { fromLonLat } from 'ol/proj'
+import { Style, Circle, Fill, Stroke, Text } from 'ol/style'
 import 'ol/ol.css'
+import { Location } from '@/types/dashboard'
 
-export default function MapComponent() {
+type Props = {
+  locations?: Location[]
+  center?: [number, number]
+  zoom?: number
+}
+
+export default function MapComponent({
+  locations = [],
+  center = [-34.8717, -8.0631],
+  zoom = 13,
+}: Props) {
   const mapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!mapRef.current) return
+
+    const features = locations.map((loc) => {
+      const feature = new Feature({
+        geometry: new Point(fromLonLat(loc.coordinates)),
+        ...loc,
+      })
+
+      feature.setStyle(
+        new Style({
+          image: new Circle({
+            radius: 10,
+            fill: new Fill({ color: loc.color }),
+            stroke: new Stroke({ color: '#ffffff', width: 2 }),
+          }),
+          text: new Text({
+            text: loc.name,
+            offsetY: -20,
+            fill: new Fill({ color: '#ffffff' }),
+            stroke: new Stroke({ color: '#000000', width: 3 }),
+            font: '12px sans-serif',
+          }),
+        }),
+      )
+
+      return feature
+    })
+
+    const vectorLayer = new VectorLayer({
+      source: new VectorSource({ features }),
+    })
 
     const map = new Map({
       target: mapRef.current,
@@ -24,15 +70,16 @@ export default function MapComponent() {
             maxZoom: 20,
           }),
         }),
+        vectorLayer,
       ],
       view: new View({
-        center: fromLonLat([-43.1729, -22.9068]),
-        zoom: 12,
+        center: fromLonLat(center),
+        zoom,
       }),
     })
 
     return () => map.setTarget(undefined)
-  }, [])
+  }, [locations, center, zoom])
 
   return <div ref={mapRef} style={{ width: '100%', height: '245px' }} />
 }

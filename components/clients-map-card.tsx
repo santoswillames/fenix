@@ -11,13 +11,48 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import dynamic from 'next/dynamic'
+import { Location } from '@/types/dashboard'
+import { useMemo, useState } from 'react'
 
 const Map = dynamic(() => import('@/components/clients-map'), {
   ssr: false,
   loading: () => <p>Carregando mapa...</p>,
 })
 
-export function ClientsMap() {
+interface ClientsMapProps {
+  locations: Location[]
+}
+
+export function ClientsMap({ locations }: ClientsMapProps) {
+  const [selectedLocation, setSelectedLocation] = useState<string>('all')
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+
+  const uniqueLocations = useMemo(
+    () => [...new Set(locations.map((l) => l.id))],
+    [locations],
+  )
+
+  const uniqueCategories = useMemo(
+    () => [...new Set(locations.map((l) => l.category))],
+    [locations],
+  )
+
+  const filtered = useMemo(() => {
+    return locations.filter((loc) => {
+      const matchesLocation =
+        selectedLocation === 'all' || loc.id === selectedLocation
+      const matchesCategory =
+        selectedCategory === 'all' || loc.category === selectedCategory
+      return matchesLocation && matchesCategory
+    })
+  }, [locations, selectedLocation, selectedCategory])
+
+  // Recentrar mapa na primeira localização filtrada ou na localização padrão
+  const mapCenter = useMemo<[number, number]>(() => {
+    if (filtered.length > 0) return filtered[0].coordinates
+    return [-34.8717, -8.0631]
+  }, [filtered])
+
   return (
     <Card
       className={cn(
@@ -35,28 +70,43 @@ export function ClientsMap() {
             Mapa de clientes por região
           </h2>
           <div className="flex gap-4">
-            <Select>
-              <SelectTrigger className="">
+            <Select
+              value={selectedLocation}
+              onValueChange={setSelectedLocation}
+            >
+              <SelectTrigger>
                 <SelectValue placeholder="Todos os locais" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="sao-paulo">São Paulo</SelectItem>
-                  <SelectItem value="rio">Rio de Janeiro</SelectItem>
-                  <SelectItem value="bra">Brasília</SelectItem>
+                  <SelectItem value="all">Todos os locais</SelectItem>
+                  {uniqueLocations.map((id) => {
+                    const loc = locations.find((l) => l.id === id)!
+                    return (
+                      <SelectItem key={id} value={id}>
+                        {loc.name}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>
 
-            <Select>
-              <SelectTrigger className="">
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
+              <SelectTrigger>
                 <SelectValue placeholder="Todos os tipos" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="tipo1">Tipo 1</SelectItem>
-                  <SelectItem value="tipo2">Tipo 2</SelectItem>
-                  <SelectItem value="tipo3">Tipo 3</SelectItem>
+                  <SelectItem value="all">Todos os tipos</SelectItem>
+                  {uniqueCategories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -64,7 +114,7 @@ export function ClientsMap() {
         </div>
 
         <div className="flex-1 flex items-center justify-center rounded-2xl overflow-hidden">
-          <Map />
+          <Map locations={filtered} center={mapCenter} zoom={13} />
         </div>
       </CardContent>
     </Card>

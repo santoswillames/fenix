@@ -4,8 +4,17 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { ChevronRight } from 'lucide-react'
 import { ConversionRateChart } from './conversion-rate-chart'
+import { Trend } from '@/types/dashboard'
 
-export function ConversionRateCard() {
+interface ConversionRateCardProps {
+  labels: string[]
+  conversionTrend: Trend
+}
+
+export function ConversionRateCard({
+  labels,
+  conversionTrend,
+}: ConversionRateCardProps) {
   return (
     <Card
       className={cn(
@@ -25,7 +34,10 @@ export function ConversionRateCard() {
         </div>
 
         <div className="flex-1 flex items-center justify-center">
-          <ConversionRateChart />
+          <ConversionRateChart
+            labels={labels}
+            conversionTrend={conversionTrend}
+          />
         </div>
       </CardContent>
     </Card>
