@@ -1,4 +1,4 @@
-# 🔥 Fêniz — Projeto Técnico React
+# 🔥 Fênix — Projeto Técnico React
 
 Interface moderna desenvolvida para o **Projeto Fênix**, com o objetivo de recriar a experiência do operador do sistema Nortus utilizando tecnologias atuais, mantendo integração com a API legado (v1).
 
