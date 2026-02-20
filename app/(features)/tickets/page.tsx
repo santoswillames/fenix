@@ -2,9 +2,12 @@ import { Header } from '@/components/header'
 import { NewTicketDialog } from '@/components/new-ticket-dialog'
 import { StatsCard } from '@/components/stats-card'
 import { TicketsTable } from '@/components/tickets-table/tickets-table'
+import { getTickets } from '@/services/tickets.service'
 import { CircleCheckBig, Clock, MessageCircleReply, Ticket } from 'lucide-react'
 
-export default function TicketsPage() {
+export default async function TicketsPage() {
+  const ticketsData = await getTickets()
+
   return (
     <div>
       <Header title="Tickets" />
@@ -31,7 +34,7 @@ export default function TicketsPage() {
             icon={<Clock size={28} color="#59BCDD" />}
           />
         </div>
-        <TicketsTable />
+        <TicketsTable data={ticketsData.data} />
       </main>
       <NewTicketDialog />
     </div>

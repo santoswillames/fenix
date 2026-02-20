@@ -2,9 +2,46 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
-import { Ticket } from '@/types/ticket'
+import { Ticket, TicketPriority, TicketStatus } from '@/types/ticket'
 import { Pencil, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+
+const priorityMap: Record<
+  TicketPriority,
+  { label: string; className: string }
+> = {
+  Baixa: {
+    label: 'Baixa',
+    className: 'bg-gray-500/20 text-gray-400 hover:bg-gray-500/30',
+  },
+  Média: {
+    label: 'Média',
+    className: 'bg-[#4DD4CE]/20 text-[#4DD4CE] hover:bg-[#4DD4CE]/30',
+  },
+  Alta: {
+    label: 'Alta',
+    className: 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30',
+  },
+  Urgente: {
+    label: 'Urgente',
+    className: 'bg-red-500/20 text-red-400 hover:bg-red-500/30',
+  },
+}
+
+const statusMap: Record<TicketStatus, { label: string; className: string }> = {
+  Aberto: {
+    label: 'Aberto',
+    className: 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30',
+  },
+  'Em andamento': {
+    label: 'Em andamento',
+    className: 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30',
+  },
+  Fechado: {
+    label: 'Fechado',
+    className: 'bg-green-500/20 text-green-400 hover:bg-green-500/30',
+  },
+}
 
 export const columns = (
   openEdit: (ticket: Ticket) => void,
@@ -14,40 +51,41 @@ export const columns = (
     header: 'ID',
   },
   {
-    accessorKey: 'prioridade',
+    accessorKey: 'priority',
     header: 'Prioridade',
     cell: ({ row }) => {
-      const status = row.original.prioridade
+      const priority = row.original.priority as TicketPriority
 
-      return (
-        <Badge
-          className={
-            status === 'media'
-              ? 'bg-[#4DD4CE]/20 text-[#4DD4CE] hover:bg-[#4DD4CE]/30'
-              : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
-          }
-        >
-          {status === 'media' ? 'Média' : 'Urgente'}
-        </Badge>
-      )
+      const config = priorityMap[priority]
+
+      if (!config) {
+        return (
+          <Badge className="bg-gray-500/20 text-gray-400">
+            {priority ?? 'Desconhecido'}
+          </Badge>
+        )
+      }
+
+      return <Badge className={config.className}>{config.label}</Badge>
     },
   },
+
   {
     accessorKey: 'cliente',
     header: 'Cliente',
     cell: ({ row }) => {
-      const client = row.original.cliente
+      const client = row.original
 
       return (
         <div className="flex flex-col">
-          <span className="font-medium text-white">{client.name}</span>
+          <span className="font-medium text-white">{client.client}</span>
           <span className="text-xs text-muted-foreground">{client.email}</span>
         </div>
       )
     },
   },
   {
-    accessorKey: 'assunto',
+    accessorKey: 'subject',
     header: 'Assunto',
   },
   {
@@ -55,25 +93,17 @@ export const columns = (
     header: 'Status',
     cell: ({ row }) => {
       const status = row.original.status
+      const config = statusMap[status]
 
-      return (
-        <Badge
-          className={
-            status === 'aberto'
-              ? 'bg-[#4DD4CE]/20 text-[#4DD4CE] hover:bg-[#4DD4CE]/30'
-              : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
-          }
-        >
-          {status === 'aberto' ? 'Aberto' : 'Em Andamento'}
-        </Badge>
-      )
+      return <Badge className={config.className}>{config.label}</Badge>
     },
   },
+
   {
     accessorKey: 'data',
     header: 'Data',
     cell: ({ row }) => {
-      const date = row.original.data
+      const date = new Date(row.original.createdAt)
 
       return (
         <span className="text-sm text-muted-foreground">
@@ -83,7 +113,7 @@ export const columns = (
     },
   },
   {
-    accessorKey: 'responsavel',
+    accessorKey: 'responsible',
     header: 'Responsável',
   },
   {
