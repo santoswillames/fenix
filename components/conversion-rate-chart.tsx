@@ -8,24 +8,29 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
+import { Trend } from '@/types/dashboard'
 
-const chartData = [
-  { month: 'Jan', clients: 100 },
-  { month: 'Feb', clients: 75 },
-  { month: 'Mar', clients: 110 },
-  { month: 'Apr', clients: 40 },
-  { month: 'May', clients: 60 },
-  { month: 'Jun', clients: 80 },
-]
+type ConversionRateChartProps = {
+  labels: string[]
+  conversionTrend: Trend
+}
 
 const chartConfig = {
-  clients: {
+  value: {
     label: 'Novos clientes ',
     color: '#4DD4CE',
   },
 } satisfies ChartConfig
 
-export function ConversionRateChart() {
+export function ConversionRateChart({
+  labels,
+  conversionTrend,
+}: ConversionRateChartProps) {
+  const chartData = conversionTrend.data.map((value, i) => ({
+    month: labels[i],
+    value,
+  }))
+
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
       <BarChart accessibilityLayer data={chartData} margin={{ top: 20 }}>
@@ -50,7 +55,7 @@ export function ConversionRateChart() {
           content={<ChartTooltipContent hideLabel />}
         />
 
-        <Bar dataKey="clients" fill="url(#barGradient)" radius={8}>
+        <Bar dataKey="value" fill="url(#barGradient)" radius={8}>
           <LabelList
             position="top"
             offset={12}

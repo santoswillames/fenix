@@ -1,9 +1,10 @@
 'use client'
 
+import { useState } from 'react'
+import { ColumnFiltersState } from '@tanstack/react-table'
 import { Input } from '@/components/ui/input'
 import { columns } from './columns'
 import { DataTable } from './data-table'
-import type { Client } from '@/types/client'
 import {
   Select,
   SelectContent,
@@ -12,93 +13,111 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { ActiveClient } from '@/types/dashboard'
 
-const data: Client[] = [
-  {
-    id: '1',
-    name: 'Ricardo Leite',
-    email: 'ricardo@email.com',
-    insuranceType: 'Seguro automóvel',
-    monthlyValue: 185.9,
-    status: 'ativo',
-    renewal: '14/12/2024',
-    region: 'São Paulo',
-  },
-  {
-    id: '2',
-    name: 'Maria Silva',
-    email: 'maria@email.com',
-    insuranceType: 'Seguro residencial',
-    monthlyValue: 89.9,
-    status: 'ativo',
-    renewal: '14/12/2024',
-    region: 'Rio de Janeiro',
-  },
-  {
-    id: '3',
-    name: 'João Costa',
-    email: 'joao@email.com',
-    insuranceType: 'Seguro viagem',
-    monthlyValue: 230,
-    status: 'pendente',
-    renewal: '14/12/2024',
-    region: 'Brasília',
-  },
-]
+interface ClientsTableProps {
+  filters: {
+    status: string[]
+    secureType: string[]
+    locations: string[]
+  }
+  data: ActiveClient[]
+}
 
-export function ClientsTable() {
+export function ClientsTable({ filters, data }: ClientsTableProps) {
+  const [globalFilter, setGlobalFilter] = useState('')
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
+  function handleColumnFilter(columnId: string, value: string) {
+    setColumnFilters((prev) => {
+      const others = prev.filter((f) => f.id !== columnId)
+      if (value === 'all') return others
+      return [...others, { id: columnId, value }]
+    })
+  }
+
   return (
     <div className="rounded-3xl border border-white/10 bg-[#0f172a] p-6 space-y-6">
-      <h2 className="text-xl font-bold ">Clientes ativos</h2>
+      <h2 className="text-xl font-bold">Clientes ativos</h2>
 
       <div className="flex gap-4 flex-wrap">
         <Input
           placeholder="Buscar por nome ou email..."
           className="bg-white/5 border-white/10 flex-1"
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
         />
-        <Select>
-          <SelectTrigger className="">
-            <SelectValue placeholder="Todos os status" />
+
+        <Select onValueChange={(v) => handleColumnFilter('status', v)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filtrar por status" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="bra" defaultChecked>
-                Todos
-              </SelectItem>
-              <SelectItem value="ativo">Ativo</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
+              <SelectItem value="all">Todos os status</SelectItem>
+              {filters.status
+                .filter(
+                  (s) =>
+                    s.toLowerCase() !== 'all' && s.toLowerCase() !== 'todos',
+                )
+                .map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
             </SelectGroup>
           </SelectContent>
         </Select>
 
-        <Select>
-          <SelectTrigger className="">
-            <SelectValue placeholder="Todos os tipos" />
+        <Select onValueChange={(v) => handleColumnFilter('secureType', v)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filtrar por tipos" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="tipo1">Tipo 1</SelectItem>
-              <SelectItem value="tipo2">Tipo 2</SelectItem>
-              <SelectItem value="tipo3">Tipo 3</SelectItem>
+              <SelectItem value="all">Todos os tipos</SelectItem>
+              {filters.secureType
+                .filter(
+                  (s) =>
+                    s.toLowerCase() !== 'all' && s.toLowerCase() !== 'todos',
+                )
+                .map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
             </SelectGroup>
           </SelectContent>
         </Select>
 
-        <Select>
-          <SelectTrigger className="">
-            <SelectValue placeholder="Todos os locais" />
+        <Select onValueChange={(v) => handleColumnFilter('location', v)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Filtrar por locais" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="sao-paulo">São Paulo</SelectItem>
-              <SelectItem value="rio">Rio de Janeiro</SelectItem>
-              <SelectItem value="bra">Brasília</SelectItem>
+              <SelectItem value="all">Todos os locais</SelectItem>
+              {filters.locations
+                .filter(
+                  (s) =>
+                    s.toLowerCase() !== 'all' && s.toLowerCase() !== 'todos',
+                )
+                .map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <DataTable
+        columns={columns}
+        data={data}
+        columnFilters={columnFilters}
+        globalFilter={globalFilter}
+      />
     </div>
   )
 }

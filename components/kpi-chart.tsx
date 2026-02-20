@@ -1,73 +1,31 @@
 'use client'
 
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
-
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-
 import { useKpiStore } from '@/store/kpi.store'
 
-const datasets = {
-  arpu: [
-    { month: 'Jan', value: 2400 },
-    { month: 'Feb', value: 2210 },
-    { month: 'Mar', value: 2290 },
-    { month: 'Apr', value: 2000 },
-    { month: 'May', value: 2780 },
-    { month: 'Jun', value: 1890 },
-  ],
-  retention: [
-    { month: 'Jan', value: 80 },
-    { month: 'Feb', value: 82 },
-    { month: 'Mar', value: 78 },
-    { month: 'Apr', value: 85 },
-    { month: 'May', value: 88 },
-    { month: 'Jun', value: 90 },
-  ],
-  conversion: [
-    { month: 'Jan', value: 12 },
-    { month: 'Feb', value: 15 },
-    { month: 'Mar', value: 18 },
-    { month: 'Apr', value: 14 },
-    { month: 'May', value: 20 },
-    { month: 'Jun', value: 22 },
-  ],
-  churn: [
-    { month: 'Jan', value: 5 },
-    { month: 'Feb', value: 4 },
-    { month: 'Mar', value: 6 },
-    { month: 'Apr', value: 3 },
-    { month: 'May', value: 4 },
-    { month: 'Jun', value: 2 },
-  ],
+type ChartDataPoint = {
+  month: string
+  value: number
+}
+
+type KpiChartProps = {
+  data: ChartDataPoint[]
 }
 
 const config = {
-  arpu: {
-    label: 'ARPU',
-    color: 'hsl(var(--chart-1))',
-  },
-  retention: {
-    label: 'Retention',
-    color: 'hsl(var(--chart-2))',
-  },
-  conversion: {
-    label: 'Conversion',
-    color: 'hsl(var(--chart-3))',
-  },
-  churn: {
-    label: 'Churn',
-    color: 'hsl(var(--chart-4))',
-  },
+  arpu: { label: 'ARPU', color: 'hsl(var(--chart-1))' },
+  retention: { label: 'Retenção', color: 'hsl(var(--chart-2))' },
+  conversion: { label: 'Conversão', color: 'hsl(var(--chart-3))' },
+  churn: { label: 'Churn', color: 'hsl(var(--chart-4))' },
 }
 
-export function KpiChart() {
+export function KpiChart({ data }: KpiChartProps) {
   const { activeKpi } = useKpiStore()
-
-  const data = datasets[activeKpi]
   const chartConfig = config[activeKpi]
 
   return (
@@ -91,6 +49,12 @@ export function KpiChart() {
         <CartesianGrid vertical={false} strokeDasharray="3 3" />
 
         <XAxis dataKey="month" tickLine={false} axisLine={false} />
+        <YAxis
+          tickLine={false}
+          axisLine={false}
+          tick={{ fill: '#94a3b8', fontSize: 12 }}
+          width={40}
+        />
 
         <ChartTooltip content={<ChartTooltipContent />} />
 
