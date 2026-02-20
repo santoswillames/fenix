@@ -17,6 +17,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { toast } from 'sonner'
+import { getCurrentUser, login } from '@/services/auth.service'
 
 const loginSchema = z.object({
   email: z.email({ error: 'Digite um e-mail válido.' }),
@@ -40,43 +41,11 @@ export function LoginForm() {
     },
   })
 
-  async function onSubmit(data: LoginFormValues) {
+  async function onSubmit({ email, password }: LoginFormValues) {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
+      await login({ email, password })
 
-      const responseData = await response.json()
-
-      if (!response.ok) {
-        throw new Error(responseData.message || 'Erro ao fazer login')
-      }
-
-      const accessToken = responseData.accessToken
-
-      if (!accessToken) {
-        throw new Error('Token não recebido')
-      }
-
-      const decoded = JSON.parse(atob(accessToken.split('.')[1]))
-      const userId = decoded.id
-
-      const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      )
-
-      if (!userResponse.ok) {
-        throw new Error('Erro ao buscar usuário')
-      }
-
-      const user = await userResponse.json()
+      const user = await getCurrentUser()
 
       setUser(user)
 
