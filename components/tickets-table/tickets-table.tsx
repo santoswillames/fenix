@@ -14,46 +14,11 @@ import {
 import { Ticket } from '@/types/ticket'
 import { useTicketDialog } from '@/store/ticket-dialog.store'
 
-const data: Ticket[] = [
-  {
-    id: '1',
-    cliente: {
-      name: 'Ricardo Leite',
-      email: 'ricardo@email.com',
-    },
-    assunto: 'Solicitação de alteração',
-    status: 'aberto',
-    data: new Date('2024-12-14'),
-    prioridade: 'urgente',
-    responsavel: 'Ana Silva',
-  },
-  {
-    id: '2',
-    cliente: {
-      name: 'Maria Silva',
-      email: 'maria@email.com',
-    },
-    assunto: 'Dúvida sobre cobertura',
-    status: 'aberto',
-    data: new Date('2024-12-15'),
-    prioridade: 'media',
-    responsavel: 'Carlos Oliveira',
-  },
-  {
-    id: '3',
-    cliente: {
-      name: 'João Costa',
-      email: 'joao@email.com',
-    },
-    assunto: 'Problema com o seguro viagem',
-    status: 'em-andamento',
-    data: new Date('2024-12-16'),
-    prioridade: 'alta',
-    responsavel: 'Roberto Santos',
-  },
-]
+interface TicketsTableProps {
+  data: Ticket[]
+}
 
-export function TicketsTable() {
+export function TicketsTable({ data }: TicketsTableProps) {
   const { openEdit } = useTicketDialog()
 
   return (

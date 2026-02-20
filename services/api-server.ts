@@ -1,4 +1,3 @@
-// services/api-server.ts
 import { cookies } from 'next/headers'
 
 const API_URL = process.env.API_URL
